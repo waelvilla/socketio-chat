@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+  <head>
+    <title> cool chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      .form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form .input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button {  background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #username_form{
+        margin-left: 350px;
+        margin-top: 150px;
+        padding:100px;
+        width:450px;
+        border: 1px solid black;
+      }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #username{z-index:-1;}
+    </style>
+  </head>
+  <body>
+
+    <form action="" id="username_form">
+      <input type="text" id="username" placeholder="enter username">
+      <button>Submit</button>
+
+    </form>
+    <ul id="messages"></ul>
+    <form action="" class="form">
+      <input id="m" autocomplete="off"  class="input" /><button>Send</button>
+    </form>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+    let username="";
+    $('#username_form').on('submit', function(e){
+      e.preventDefault()
+      $('#username_form').hide()
+      $('.form').show()
+      username=$('#username').val()
+    })
+
+    $(function(){
+    var socket=io();
+    $('form').submit(function (e){
+      e.preventDefault()
+      socket.emit('chat message', $('#m').val(),username)
+      $('#m').val('')
+      return false
+    })
+    socket.on('chat message', function(msg,uname){
+      $('#messages').append($('<li>').text(uname+": "+msg))
+    })
+  })
+</script>
+</html>
